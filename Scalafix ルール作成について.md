@@ -1,5 +1,6 @@
 ---
 marp: true
+
 ---
 
 # Scalafix ルール作成について
@@ -36,6 +37,33 @@ Scalafix にあるルールは以下のようなものがあり、弊社でも�
 - オーバーライド時の () の有無を揃える (https://github.com/ohze/scala-rewrites)
 
 ここまできたら、 Scala のリファクタリング提案をここに集約したい！と考えました。
+
+---
+
+```
+rules = [
+  RemoveUnused
+  NoAutoTupling
+  NoValInForComprehension
+  ProcedureSyntax
+  fix.scala213.NullaryOverride
+  fix.scala213.FinalObject
+  fix.scala213.Any2StringAdd
+  fix.scala213.Varargs
+  fix.scala213.ExplicitNonNullaryApply
+  fix.scala213.ExplicitNullaryEtaExpansion
+  ExplicitResultTypes
+  OrganizeImports
+  CheckIsEmpty
+  ZeroIndexToHead
+  NonCaseException
+  UnnecessarySemicolon
+]
+
+// 詳細な設定は割愛
+```
+
+.scalafix.conf
 
 ---
 
@@ -338,9 +366,12 @@ private object IsEmpty {
 今後の課題としては、
 
 - クラスの持つ `Type` や再帰的な `Type` の参照があった場合に対応 (？)
-
+  - `java.lang` 系を参照するときだけこれが渡されるのか、別名を利用すると全てこうなるのか調査
 - 型変数が返却されるパターンでの `Class[_]` 取得
+  - 周囲のシンボルから引いてくる
+- Object が返った際に、そのまま `Term.Apply` されていたら `apply` メソッドの方を見に行く
 - プロジェクト側で追加された依存関係の `Class[_]` 取得
+  - プロジェクトの成果物を突っ込んだクラスローダーの生成 (？)
 - 副作用のあるコードの検出
 
 ---
